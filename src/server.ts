@@ -1,4 +1,12 @@
 import Fastify, { FastifyInstance } from 'fastify';
+import fastifyEnv from '@fastify/env';
+import { configSchema, Config } from './config';
+
+declare module 'fastify' {
+  interface FastifyInstance {
+    config: Config;
+  }
+}
 
 const server: FastifyInstance = Fastify({
   logger: {
@@ -6,23 +14,26 @@ const server: FastifyInstance = Fastify({
   }
 });
 
-// Health check endpoint
-server.get('/health', async (request, reply) => {
-  return { status: 'ok', timestamp: new Date().toISOString() };
-});
-
-// Main route
-server.get('/', async (request, reply) => {
-  return { message: 'Fastify server is running' };
-});
-
 const start = async () => {
   try {
-    const port = parseInt(process.env.PORT || '3000', 10);
-    const host = '0.0.0.0'; // Listen on all available network interfaces
-    
-    await server.listen({ port, host });
-    server.log.info(`Server listening on ${host}:${port}`);
+    // Register env plugin
+    await server.register(fastifyEnv, {
+      schema: configSchema,
+      dotenv: true
+    });
+
+    // Health check endpoint
+    server.get('/health', async (request, reply) => {
+      return { status: 'ok', timestamp: new Date().toISOString() };
+    });
+
+    // Main route
+    server.get('/', async (request, reply) => {
+      return { message: 'Fastify server is running' };
+    });
+
+    await server.listen({ port: server.config.PORT, host: server.config.HOST });
+    server.log.info(`Server listening on ${server.config.HOST}:${server.config.PORT}`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);
