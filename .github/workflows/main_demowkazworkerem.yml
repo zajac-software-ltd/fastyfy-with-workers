@@ -61,3 +61,4 @@ jobs:
           app-name: 'DemowkaZWorkerem'
           slot-name: 'Production'
           package: .
+          startup-command: 'bash start.sh'

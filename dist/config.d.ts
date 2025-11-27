@@ -14,10 +14,15 @@ export declare const configSchema: {
             type: string;
             default: string;
         };
+        REDIS_CONNECTION_STRING: {
+            type: string;
+            default: string;
+        };
     };
 };
 export interface Config {
     NODE_ENV: string;
     PORT: number;
     HOST: string;
+    REDIS_CONNECTION_STRING: string;
 }

@@ -16,6 +16,10 @@ exports.configSchema = {
         HOST: {
             type: 'string',
             default: '0.0.0.0'
+        },
+        REDIS_CONNECTION_STRING: {
+            type: 'string',
+            default: ''
         }
     }
 };
